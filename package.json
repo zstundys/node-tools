@@ -1,15 +1,23 @@
 {
-  "name": "file-copier",
+  "name": "node-tools",
   "version": "1.0.0",
   "description": "",
-  "main": "copy-to-desktop.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx nodemon",
+    "keep-raw": "node keep-raw.js",
+    "copy-to-desktop": "node copy-to-desktop.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/fs-extra": "^9.0.13",
     "fs-extra": "^10.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.5.1"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": false
   }
 }
