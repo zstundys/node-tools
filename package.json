@@ -1,23 +1,30 @@
 {
-  "name": "node-tools",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "start": "npx nodemon",
-    "keep-raw": "node keep-raw.js",
-    "copy-to-desktop": "node copy-to-desktop.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "fs-extra": "^10.0.0"
-  },
-  "devDependencies": {
-    "prettier": "^2.5.1"
-  },
-  "prettier": {
-    "printWidth": 120,
-    "tabWidth": 4,
-    "useTabs": false
-  }
+    "name": "node-tools",
+    "version": "1.0.0",
+    "description": "",
+    "type": "module",
+    "scripts": {
+        "start": "npx nodemon",
+        "keep-raw": "node src/keep-raw.js",
+        "copy-to-desktop": "node src/copy-to-desktop.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "delete-empty": "^3.0.0",
+        "enquirer": "^2.3.6",
+        "ffmpeg": "^0.0.4",
+        "filesize": "^8.0.6",
+        "fluent-ffmpeg": "^2.1.2",
+        "fs-extra": "^10.0.0",
+        "trash": "^8.1.0"
+    },
+    "devDependencies": {
+        "prettier": "^2.5.1"
+    },
+    "prettier": {
+        "printWidth": 120,
+        "tabWidth": 4,
+        "useTabs": false
+    }
 }

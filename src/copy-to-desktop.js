@@ -1,5 +1,4 @@
-//@ts-check
-const fs = require("fs-extra");
+import fs from "fs-extra";
 
 const EXTERNAL_DRIVE_DIR = "D:/Canon 600D";
 const LOCAL_DRIVE_DIR = "C:/Users/zstun/Pictures/Photos";

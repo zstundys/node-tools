@@ -1,10 +1,12 @@
 {
     "compilerOptions": {
-        "module": "commonJS",
+        "module": "ES2020",
         "strict": true,
-        "target": "es6",
+        "target": "es2017",
         "checkJs": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "typeRoots": ["src/typings/*.d.ts"]
     },
+    "include": ["src/**/*"],
     "exclude": ["node_modules"]
 }

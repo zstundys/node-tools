@@ -6,11 +6,14 @@
  * npm run keep-raw
  */
 
-const fs = require("fs-extra");
-const path = require("path");
+import fs from "fs-extra";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const IMAGES_DIR = path.relative("./", "./images");
-const DUPLICATES_DIR = path.relative("./", "./duplicates");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const IMAGES_DIR = path.join(__dirname, "./output/keep-raw/images");
+const DUPLICATES_DIR = path.join(__dirname, "./output/keep-raw/duplicates");
 
 const jpegFiles = readJpegFiles();
 
