@@ -17,6 +17,7 @@
         "filesize": "^8.0.6",
         "fluent-ffmpeg": "^2.1.2",
         "fs-extra": "^10.0.0",
+        "html-pdf": "^3.0.1",
         "trash": "^8.1.0"
     },
     "devDependencies": {
