@@ -42,7 +42,9 @@ function moveFilesToDuplicatesFolder(movedFileNames) {
 
         console.log(src, "👉", dest);
 
-        fs.moveSync(src, dest);
+        fs.moveSync(src, dest, {
+            overwrite: true,
+        });
     });
 }
 
