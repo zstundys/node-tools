@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-        "module": "ES2020",
+        "module": "NodeNext",
         "strict": true,
-        "target": "es2017",
+        "target": "ES2022",
         "checkJs": true,
         "moduleResolution": "node",
         "typeRoots": ["src/typings/*.d.ts"]

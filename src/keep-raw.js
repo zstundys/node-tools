@@ -9,11 +9,17 @@
 import fs from "fs-extra";
 import path from "path";
 import { fileURLToPath } from "url";
+import { transferAndroidImages } from "./transfer-android-images.js";
+import inquirer from "inquirer";
 
+// @ts-ignore
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const PHONE_PHOTOS_SOURCE_DIRS = ["/sdcard/DCIM/Camera", "/sdcard/Pictures/Raw"];
 const IMAGES_DIR = path.join(__dirname, "./output/keep-raw/images");
 const DUPLICATES_DIR = path.join(__dirname, "./output/keep-raw/duplicates");
+
+await transferAndroidImages(PHONE_PHOTOS_SOURCE_DIRS, IMAGES_DIR);
 
 const jpegFiles = readJpegFiles();
 
@@ -25,6 +31,26 @@ if (jpegFilesWithDng.length) {
     console.log(`Moving ${jpegFilesWithDng.length} JPEG files to "${DUPLICATES_DIR}" folder...`);
 
     moveFilesToDuplicatesFolder(jpegFilesWithDng);
+
+    /** @type {{ delete: boolean }} */
+    const answers = await inquirer.prompt([
+        {
+            type: "confirm",
+            name: "delete",
+            message: 'Delete all JPEG files from "duplicates" folder?',
+        },
+    ]);
+
+    if (answers.delete) {
+        console.log(`Deleting all JPEG files from "duplicates" folder...`);
+
+        // Delete all JPEG files from "duplicates" folder except .gitignore file
+        const duplicatesFiles = fs.readdirSync(DUPLICATES_DIR).filter((fileName) => fileName !== ".gitignore");
+        duplicatesFiles.forEach((fileName) => {
+            const filePath = path.resolve(DUPLICATES_DIR, fileName);
+            fs.removeSync(filePath);
+        });
+    }
 } else {
     console.log(`No JPEG files found that have RAW images.`);
 }
