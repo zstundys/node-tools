@@ -10,10 +10,21 @@ import { fileURLToPath } from "url";
  * @param {string} targetDir
  */
 export async function transferAndroidImages(sourceDirs, targetDir) {
-    console.log("Transferring Android images...");
+    console.log("📱 Transferring Android images...");
 
     for (const sourceDir of sourceDirs) {
         await pullFiles(sourceDir, targetDir);
+    }
+}
+
+/**
+ * @param {string[]} sourceDirs
+ */
+export async function removeAndroidImages(sourceDirs) {
+    console.log("📱 Removing Android images...");
+
+    for (const sourceDir of sourceDirs) {
+        await removeDir(sourceDir);
     }
 }
 
@@ -50,12 +61,12 @@ function ensureAdbConnection() {
  * @return {Promise<void>}
  */
 function pullFiles(sourceDir, targetDir) {
-    console.log(`Pulling files from ${sourceDir} to ${targetDir}...`);
+    console.log(`📱 Pulling files from ${sourceDir} to ${targetDir}...`);
 
     return new Promise((resolve, reject) => {
         exec(`adb pull ${sourceDir} ${targetDir}`, (err, stdout, stderr) => {
             if (err) {
-                console.error(`Error pulling files: ${err}`);
+                console.error(`📱 Error pulling files: ${err}`);
                 reject();
                 return;
             }
@@ -77,8 +88,29 @@ function pullFiles(sourceDir, targetDir) {
 
             fs.rmdirSync(folderWithFiles);
 
-            console.log(`${files.length} files from ${sourceDir} to ${targetDir} successfully transferred.`);
+            console.log(`📱 ${files.length} files from ${sourceDir} to ${targetDir} successfully transferred.`);
 
+            resolve();
+        });
+    });
+}
+
+/**
+ * @param {string} targetDir
+ * @return {Promise<void>}
+ */
+function removeDir(targetDir) {
+    console.log(`📱 Removing files from ${targetDir}...`);
+
+    return new Promise((resolve, reject) => {
+        exec(`adb shell rm -rf ${targetDir}`, (err, stdout, stderr) => {
+            if (err) {
+                console.error(`📱 Error removing files: ${err}`);
+                reject();
+                return;
+            }
+
+            console.log(stdout);
             resolve();
         });
     });

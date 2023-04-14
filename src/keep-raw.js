@@ -9,7 +9,7 @@
 import fs from "fs-extra";
 import path from "path";
 import { fileURLToPath } from "url";
-import { transferAndroidImages } from "./transfer-android-images.js";
+import { transferAndroidImages, removeAndroidImages } from "./transfer-android-images.js";
 import inquirer from "inquirer";
 
 // @ts-ignore
@@ -56,6 +56,29 @@ if (jpegFilesWithDng.length) {
 }
 
 console.log(`Done`);
+
+const { dangerouslyDeleteFromAndroid, dangerouslyDeleteFromAndroidConfirm } = await inquirer.prompt([
+    {
+        type: "confirm",
+        name: "dangerouslyDeleteFromAndroid",
+        message: "Delete all transferred files from Android phone?",
+        default: false,
+    },
+    {
+        type: "confirm",
+        name: "dangerouslyDeleteFromAndroidConfirm",
+        message: "Are you really sure? Changes cannot be undone.",
+        default: false,
+    },
+]);
+
+if (dangerouslyDeleteFromAndroid && dangerouslyDeleteFromAndroidConfirm) {
+    console.log(`Deleting all transferred files from Android phone...`);
+
+    await removeAndroidImages(PHONE_PHOTOS_SOURCE_DIRS);
+
+    console.log(`Done`);
+}
 
 /**
  * Moves given image files from `images` folder to files to `duplicates` folder
