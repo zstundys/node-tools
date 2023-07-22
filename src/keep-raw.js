@@ -25,12 +25,12 @@ const jpegFiles = readJpegFiles();
 
 console.log(`Found ${jpegFiles.length} JPEG files in "${IMAGES_DIR}" folder...`);
 
-const jpegFilesWithDng = filterDuplicates(jpegFiles);
+const duplicateJpegFiles = filterDuplicates(jpegFiles);
 
-if (jpegFilesWithDng.length) {
-    console.log(`Moving ${jpegFilesWithDng.length} JPEG files to "${DUPLICATES_DIR}" folder...`);
+if (duplicateJpegFiles.length) {
+    console.log(`Moving ${duplicateJpegFiles.length} JPEG files to "${DUPLICATES_DIR}" folder...`);
 
-    moveFilesToDuplicatesFolder(jpegFilesWithDng);
+    moveFilesToDuplicatesFolder(duplicateJpegFiles);
 
     /** @type {{ delete: boolean }} */
     const answers = await inquirer.prompt([

@@ -1,7 +1,9 @@
 import path from "path";
 import fs from "fs-extra";
 import { exec } from "child_process";
-import { fileURLToPath } from "url";
+
+/** Device id for Pixel 7 Pro */
+const DEVICE_ID = "28231FDH3009U9";
 
 /**
  * Requires ADB to be installed and in the Path
@@ -11,6 +13,7 @@ import { fileURLToPath } from "url";
  */
 export async function transferAndroidImages(sourceDirs, targetDir) {
     console.log("📱 Transferring Android images...");
+    await ensureAdbConnection();
 
     for (const sourceDir of sourceDirs) {
         await pullFiles(sourceDir, targetDir);
@@ -28,21 +31,10 @@ export async function removeAndroidImages(sourceDirs) {
     }
 }
 
-await ensureAdbConnection();
-
-// @ts-ignore
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const sourceDirs = ["/sdcard/DCIM/Camera", "/sdcard/Pictures/Raw"];
-const targetDir = path.resolve(__dirname, "./output/keep-raw/images");
-
-for (const sourceDir of sourceDirs) {
-    await pullFiles(sourceDir, targetDir);
-}
-
 /** @return {Promise<void>} */
 function ensureAdbConnection() {
     return new Promise((resolve, reject) => {
-        exec("adb devices", (err, stdout, stderr) => {
+        exec("adb devices -l", (err, stdout, stderr) => {
             if (err) {
                 console.error(`Error listing devices: ${err}`);
                 reject(err);
@@ -64,7 +56,7 @@ function pullFiles(sourceDir, targetDir) {
     console.log(`📱 Pulling files from ${sourceDir} to ${targetDir}...`);
 
     return new Promise((resolve, reject) => {
-        exec(`adb pull ${sourceDir} ${targetDir}`, (err, stdout, stderr) => {
+        exec(`adb -s ${DEVICE_ID} pull ${sourceDir} ${targetDir}`, (err, stdout, stderr) => {
             if (err) {
                 console.error(`📱 Error pulling files: ${err}`);
                 reject();
@@ -103,7 +95,7 @@ function removeDir(targetDir) {
     console.log(`📱 Removing files from ${targetDir}...`);
 
     return new Promise((resolve, reject) => {
-        exec(`adb shell rm -rf ${targetDir}`, (err, stdout, stderr) => {
+        exec(`adb -s ${DEVICE_ID} shell rm -rf ${targetDir}`, (err, stdout, stderr) => {
             if (err) {
                 console.error(`📱 Error removing files: ${err}`);
                 reject();
