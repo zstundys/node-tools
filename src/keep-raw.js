@@ -12,7 +12,6 @@ import { fileURLToPath } from "url";
 import { transferAndroidImages, removeAndroidImages } from "./transfer-android-images.js";
 import inquirer from "inquirer";
 
-// @ts-ignore
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PHONE_PHOTOS_SOURCE_DIRS = ["/sdcard/DCIM/Camera", "/sdcard/Pictures/Raw"];
@@ -69,6 +68,7 @@ const { dangerouslyDeleteFromAndroid, dangerouslyDeleteFromAndroidConfirm } = aw
         name: "dangerouslyDeleteFromAndroidConfirm",
         message: "Are you really sure? Changes cannot be undone.",
         default: false,
+        when: (answers) => answers.dangerouslyDeleteFromAndroid,
     },
 ]);
 

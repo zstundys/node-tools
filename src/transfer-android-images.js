@@ -2,8 +2,12 @@ import path from "path";
 import fs from "fs-extra";
 import { exec } from "child_process";
 
-/** Device id for Pixel 7 Pro */
-const DEVICE_ID = "28231FDH3009U9";
+const IDS_BY_DEVICE = {
+    PIXEL_7_PRO: "28231FDH3009U9",
+    PIXEL_4: "9B011FFAZ007CV",
+};
+
+const DEVICE_ID_TO_TRANSFER_FROM = IDS_BY_DEVICE.PIXEL_4;
 
 /**
  * Requires ADB to be installed and in the Path
@@ -56,7 +60,7 @@ function pullFiles(sourceDir, targetDir) {
     console.log(`📱 Pulling files from ${sourceDir} to ${targetDir}...`);
 
     return new Promise((resolve, reject) => {
-        exec(`adb -s ${DEVICE_ID} pull ${sourceDir} ${targetDir}`, (err, stdout, stderr) => {
+        exec(`adb -s ${DEVICE_ID_TO_TRANSFER_FROM} pull ${sourceDir} ${targetDir}`, (err, stdout, stderr) => {
             if (err) {
                 console.error(`📱 Error pulling files: ${err}`);
                 reject();
@@ -95,7 +99,7 @@ function removeDir(targetDir) {
     console.log(`📱 Removing files from ${targetDir}...`);
 
     return new Promise((resolve, reject) => {
-        exec(`adb -s ${DEVICE_ID} shell rm -rf ${targetDir}`, (err, stdout, stderr) => {
+        exec(`adb -s ${DEVICE_ID_TO_TRANSFER_FROM} shell rm -rf ${targetDir}`, (err, stdout, stderr) => {
             if (err) {
                 console.error(`📱 Error removing files: ${err}`);
                 reject();
