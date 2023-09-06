@@ -7,7 +7,7 @@ const IDS_BY_DEVICE = {
     PIXEL_4: "9B011FFAZ007CV",
 };
 
-const DEVICE_ID_TO_TRANSFER_FROM = IDS_BY_DEVICE.PIXEL_4;
+const DEVICE_ID_TO_TRANSFER_FROM = IDS_BY_DEVICE.PIXEL_7_PRO;
 
 /**
  * Requires ADB to be installed and in the Path
@@ -57,6 +57,8 @@ function ensureAdbConnection() {
  * @return {Promise<void>}
  */
 function pullFiles(sourceDir, targetDir) {
+    const device = Object.entries(IDS_BY_DEVICE).find(([, id]) => id === DEVICE_ID_TO_TRANSFER_FROM)?.map(([name]) => name));
+    console.log(`📱 Device: ${device}`);
     console.log(`📱 Pulling files from ${sourceDir} to ${targetDir}...`);
 
     return new Promise((resolve, reject) => {
