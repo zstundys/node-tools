@@ -7,7 +7,8 @@ const IDS_BY_DEVICE = {
     PIXEL_4: "9B011FFAZ007CV",
 };
 
-const DEVICE_ID_TO_TRANSFER_FROM = IDS_BY_DEVICE.PIXEL_7_PRO;
+const DEVICE_ID_TO_TRANSFER_FROM = IDS_BY_DEVICE.PIXEL_4;
+const DEVICE = Object.entries(IDS_BY_DEVICE).find(([, id]) => id === DEVICE_ID_TO_TRANSFER_FROM)?.[0];
 
 /**
  * Requires ADB to be installed and in the Path
@@ -16,7 +17,7 @@ const DEVICE_ID_TO_TRANSFER_FROM = IDS_BY_DEVICE.PIXEL_7_PRO;
  * @param {string} targetDir
  */
 export async function transferAndroidImages(sourceDirs, targetDir) {
-    console.log("📱 Transferring Android images...");
+    console.log(`📱 [${DEVICE}] Transferring Android images...`);
     await ensureAdbConnection();
 
     for (const sourceDir of sourceDirs) {
@@ -28,7 +29,7 @@ export async function transferAndroidImages(sourceDirs, targetDir) {
  * @param {string[]} sourceDirs
  */
 export async function removeAndroidImages(sourceDirs) {
-    console.log("📱 Removing Android images...");
+    console.log(`📱 [${DEVICE}] Removing Android images...`);
 
     for (const sourceDir of sourceDirs) {
         await removeDir(sourceDir);
@@ -57,14 +58,13 @@ function ensureAdbConnection() {
  * @return {Promise<void>}
  */
 function pullFiles(sourceDir, targetDir) {
-    const device = Object.entries(IDS_BY_DEVICE).find(([, id]) => id === DEVICE_ID_TO_TRANSFER_FROM)?.map(([name]) => name));
-    console.log(`📱 Device: ${device}`);
-    console.log(`📱 Pulling files from ${sourceDir} to ${targetDir}...`);
+    console.log(`📱 [${DEVICE}] Pulling files from ${sourceDir} to ${targetDir}...`);
 
     return new Promise((resolve, reject) => {
         exec(`adb -s ${DEVICE_ID_TO_TRANSFER_FROM} pull ${sourceDir} ${targetDir}`, (err, stdout, stderr) => {
             if (err) {
-                console.error(`📱 Error pulling files: ${err}`);
+                console.error(`📱 [${DEVICE}] Error pulling files from device`);
+                console.error(err);
                 reject();
                 return;
             }
@@ -86,7 +86,9 @@ function pullFiles(sourceDir, targetDir) {
 
             fs.rmdirSync(folderWithFiles);
 
-            console.log(`📱 ${files.length} files from ${sourceDir} to ${targetDir} successfully transferred.`);
+            console.log(
+                `📱 [${DEVICE}] ${files.length} files from ${sourceDir} to ${targetDir} successfully transferred.`
+            );
 
             resolve();
         });
@@ -98,12 +100,12 @@ function pullFiles(sourceDir, targetDir) {
  * @return {Promise<void>}
  */
 function removeDir(targetDir) {
-    console.log(`📱 Removing files from ${targetDir}...`);
+    console.log(`📱 [${DEVICE}] Removing files from ${targetDir}...`);
 
     return new Promise((resolve, reject) => {
         exec(`adb -s ${DEVICE_ID_TO_TRANSFER_FROM} shell rm -rf ${targetDir}`, (err, stdout, stderr) => {
             if (err) {
-                console.error(`📱 Error removing files: ${err}`);
+                console.error(`📱 [${DEVICE}] Error removing files: ${err}`);
                 reject();
                 return;
             }
