@@ -1,4 +1,4 @@
-import enquirer from "enquirer";
+import inquirer from "inquirer";
 import filesize from "filesize";
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs-extra";
@@ -173,7 +173,7 @@ async function cleanupProcessedVideos(videosDir) {
     /**
      * @type { {canDelete: boolean} }
      */
-    const { canDelete } = await enquirer.prompt({
+    const { canDelete } = await inquirer.prompt({
         type: "confirm",
         name: "canDelete",
         message: `Found ${filesToDelete.length} processed videos (${filesize(
