@@ -1,4 +1,4 @@
-declare interface IVideoOutputResult {
+declare interface IOutputResult {
     file: {
         input: string;
         output: string;

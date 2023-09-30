@@ -14,7 +14,7 @@ export class FileSizeUtils {
     /**
      * @param {string} targetFile
      * @param {string} outputTarget
-     * @returns {IVideoOutputResult}
+     * @returns {IOutputResult}
      */
     static makeOutputResult(targetFile, outputTarget) {
         const stats = this.compareFiles(targetFile, outputTarget);

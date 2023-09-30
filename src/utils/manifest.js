@@ -12,7 +12,7 @@ export class Manifest {
 
     /**
      *
-     * @param {IVideoOutputResult} result
+     * @param {IOutputResult} result
      */
     update(result) {
         fs.ensureFileSync(this.#manifestFilePath);
@@ -32,7 +32,7 @@ export class Manifest {
 
     /**
      *
-     * @returns {IVideoOutputResult[]}
+     * @returns {IOutputResult[]}
      */
     contents() {
         if (!fs.existsSync(this.#manifestFilePath)) {
@@ -41,7 +41,7 @@ export class Manifest {
 
         const contents = fs.readFileSync(this.#manifestFilePath).toString();
 
-        /** @type {IVideoOutputResult[]} */
+        /** @type {IOutputResult[]} */
         const manifest = JSON.parse(contents || "[]");
 
         return manifest;
@@ -59,7 +59,7 @@ export class Manifest {
     /**
      *
      * @param {string} inputFilePath
-     * @returns {IVideoOutputResult | undefined}
+     * @returns {IOutputResult | undefined}
      */
     find(inputFilePath) {
         return this.contents().find((m) => m.file.input === inputFilePath);

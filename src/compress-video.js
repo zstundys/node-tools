@@ -19,7 +19,7 @@ const ENCODING_PARAMS = {
     audioFrequency: 44100,
 };
 
-const VIDEO_FOLDERS = DirectoryUtils.readFolders("C:\\Users\\zstun\\Videos\\Game Recordings");
+const VIDEO_FOLDERS = DirectoryUtils.readFolders("D:\\Videos\\Game Recordings");
 
 (async () => {
     await processVideoFolders(VIDEO_FOLDERS);
