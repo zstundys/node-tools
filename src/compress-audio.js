@@ -11,7 +11,7 @@ import { Manifest } from "./utils/manifest.js";
 
 const MANIFEST_FILE_NAME = "compress-audio-manifest.json";
 const COMPRESSED_FOLDER_NAME = "Compressed";
-const UNCOMPRESSED_AUDIO_FILES_PATH = "G:\\My Drive\\Personal Guitar";
+const UNCOMPRESSED_AUDIO_FILES_PATH = "G:\\My Drive\\Archive\\Creative Works";
 const SOURCE_FILE_EXT = ".wav";
 const OUTPUT_FILE_EXT = ".mp3";
 const ENCODING_PARAMS = {
@@ -114,8 +114,8 @@ function makeManifest(outputFilePath) {
 
 /**
  *
- * @param {string} inputFilePath absolute path to wav file input
- * @param {string} outputFilePath absolute path to wav file output
+ * @param {string} inputFilePath absolute path to file input
+ * @param {string} outputFilePath absolute path to file output
  * @returns {Promise<void>}
  */
 async function compressAudio(inputFilePath, outputFilePath) {
@@ -162,7 +162,7 @@ async function compressAudio(inputFilePath, outputFilePath) {
 async function cleanupProcessedFiles(filesDir) {
     console.log(`Checking processed files in ${filesDir}...`);
 
-    const processedFiles = DirectoryUtils.readFilesWithExt(filesDir, "wav");
+    const processedFiles = DirectoryUtils.readFilesWithExt(filesDir, SOURCE_FILE_EXT);
 
     if (processedFiles.length === 0) {
         return;
