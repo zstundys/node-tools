@@ -14,4 +14,4 @@ jobs:
             - name: Generate diagram
               uses: githubocto/repo-visualizer@0.9.1
               with:
-                  excluded_globs: "**/*.gitkeep;**/.github;**/.gitignore;**/node_modules;**/pnpm-lock.yaml"
+                  excluded_globs: "**/*.gitkeep;**/.github;**/.gitignore;**/node_modules;**/pnpm-lock.yaml;**/output"
