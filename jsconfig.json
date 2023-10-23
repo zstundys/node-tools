@@ -1,11 +1,9 @@
 {
     "compilerOptions": {
-        "module": "ES2022",
+        "module": "NodeNext",
         "strict": true,
-        "target": "ES2022",
         "checkJs": true,
-        "moduleResolution": "node",
-        "typeRoots": ["src/typings/*.d.ts"]
+        "moduleResolution": "nodenext"
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules"]

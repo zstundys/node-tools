@@ -26,6 +26,12 @@ dependencies:
   inquirer:
     specifier: ^9.2.11
     version: 9.2.11
+  lodash-es:
+    specifier: ^4.17.21
+    version: 4.17.21
+  node-xlsx:
+    specifier: ^0.23.0
+    version: 0.23.0
   trash:
     specifier: ^8.1.1
     version: 8.1.1
@@ -810,6 +816,10 @@ packages:
     dev: false
     optional: true
 
+  /lodash-es@4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: false
+
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
     dev: false
@@ -891,6 +901,14 @@ packages:
   /mute-stream@1.0.0:
     resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+    dev: false
+
+  /node-xlsx@0.23.0:
+    resolution: {integrity: sha512-r3KaSZSsSrK92rbPXnX/vDdxURmPPik0rjJ3A+Pybzpjyrk4G6WyGfj8JIz5dMMEpCmWVpmO4qoVPBxnpLv/8Q==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+    dependencies:
+      xlsx: '@cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz'
     dev: false
 
   /npm-run-path@3.1.0:
@@ -1441,3 +1459,11 @@ packages:
       fd-slicer: 1.1.0
     dev: false
     optional: true
+
+  '@cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz':
+    resolution: {tarball: https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz}
+    name: xlsx
+    version: 0.19.3
+    engines: {node: '>=0.8'}
+    hasBin: true
+    dev: false

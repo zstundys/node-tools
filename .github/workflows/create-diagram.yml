@@ -1,0 +1,15 @@
+name: Create Diagram
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    create-diagram:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout
+            - name: Generate diagram
+              uses: githubocto/repo-visualizer
