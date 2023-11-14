@@ -1,5 +1,3 @@
-![Visualization of the codebase](./diagram.svg)
-
 ## Setup - Windows Powershell profile
 
 ```ps1
