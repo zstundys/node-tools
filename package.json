@@ -6,7 +6,8 @@
     "scripts": {
         "start": "npx nodemon",
         "keep-raw": "node src/keep-raw.js",
-        "copy-to-desktop": "node src/copy-to-desktop.js"
+        "copy-to-desktop": "node src/copy-to-desktop.js",
+        "rdr2-vr-swap": "node src/rdr2-vr-swapper.js"
     },
     "author": "",
     "license": "ISC",
