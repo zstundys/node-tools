@@ -7,11 +7,13 @@
         "start": "npx nodemon",
         "keep-raw": "node src/keep-raw.js",
         "copy-to-desktop": "node src/copy-to-desktop.js",
-        "rdr2-vr-swap": "node src/rdr2-vr-swapper.js"
+        "rdr2-vr-swap": "node src/rdr2-vr-swapper.js",
+        "concurrently": "concurrently"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "concurrently": "^8.2.2",
         "delete-empty": "^3.0.0",
         "ffmpeg": "^0.0.4",
         "filesize": "^8.0.7",
@@ -19,9 +21,9 @@
         "fs-extra": "^10.1.0",
         "html-pdf": "^3.0.1",
         "inquirer": "^9.2.11",
-        "trash": "^8.1.1",
         "lodash-es": "^4.17.21",
-        "node-xlsx": "^0.23.0"
+        "node-xlsx": "^0.23.0",
+        "trash": "^8.1.1"
     },
     "devDependencies": {
         "prettier": "^2.8.8"

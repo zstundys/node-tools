@@ -6,10 +6,14 @@
 function Run-Tool {
     param($toolName)
     Set-Location -Path "O:\node-tools"
-    Invoke-Expression "pnpm run $toolName"
-}
 
-Set-Alias -Name run -Value Run-Tool
+    If (!$toolName) {
+        Invoke-Expression "pnpm run"
+        return
+    }
+
+    Invoke-Expression "pnpm run concurrently 'npm:$toolName' -c green"
+}
 ```
 
 Usage:
