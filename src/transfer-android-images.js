@@ -1,13 +1,14 @@
 import path from "path";
 import fs from "fs-extra";
-import { exec } from "child_process";
+import { exec, execSync } from "child_process";
 
 const IDS_BY_DEVICE = {
     PIXEL_7_PRO: "28231FDH3009U9",
     PIXEL_4: "9B011FFAZ007CV",
+    ASUS_ZENFONE_10: "R7AIB7005204XXX",
 };
 
-const DEVICE_ID_TO_TRANSFER_FROM = IDS_BY_DEVICE.PIXEL_7_PRO;
+const DEVICE_ID_TO_TRANSFER_FROM = IDS_BY_DEVICE.ASUS_ZENFONE_10;
 const DEVICE = Object.entries(IDS_BY_DEVICE).find(([, id]) => id === DEVICE_ID_TO_TRANSFER_FROM)?.[0];
 
 /**
@@ -59,6 +60,14 @@ function ensureAdbConnection() {
  */
 function pullFiles(sourceDir, targetDir) {
     console.log(`📱 [${DEVICE}] Pulling files from ${sourceDir} to ${targetDir}...`);
+
+    // Check if the sourceDir exists
+    try {
+        execSync(`adb -s ${DEVICE_ID_TO_TRANSFER_FROM} shell ls ${sourceDir}`);
+    } catch {
+        console.error(`📱 [${DEVICE}] Skipping ${sourceDir}`);
+        return Promise.resolve();
+    }
 
     return new Promise((resolve, reject) => {
         exec(`adb -s ${DEVICE_ID_TO_TRANSFER_FROM} pull ${sourceDir} ${targetDir}`, (err, stdout, stderr) => {

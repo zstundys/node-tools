@@ -14,7 +14,7 @@ import inquirer from "inquirer";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const PHONE_PHOTOS_SOURCE_DIRS = ["/sdcard/DCIM/Camera", "/sdcard/Pictures/Raw"];
+const PHONE_PHOTOS_SOURCE_DIRS = ["/sdcard/DCIM/Camera", "/sdcard/DCIM/OpenCamera", "/sdcard/Pictures/Raw"];
 const IMAGES_DIR = path.join(__dirname, "./output/keep-raw/images");
 const DUPLICATES_DIR = path.join(__dirname, "./output/keep-raw/duplicates");
 
