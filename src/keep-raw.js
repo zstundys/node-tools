@@ -21,37 +21,76 @@ const DUPLICATES_DIR = path.join(__dirname, "./output/keep-raw/duplicates");
 await transferAndroidImages(PHONE_PHOTOS_SOURCE_DIRS, IMAGES_DIR);
 
 const jpegFiles = readJpegFiles();
+const allFiles = readAllFiles();
 
 console.log(`Found ${jpegFiles.length} JPEG files in "${IMAGES_DIR}" folder...`);
 
 const duplicateJpegFiles = filterDuplicates(jpegFiles);
+const trashedFiles = filterTrashed(allFiles);
 
 if (duplicateJpegFiles.length) {
     console.log(`Moving ${duplicateJpegFiles.length} JPEG files to "${DUPLICATES_DIR}" folder...`);
 
     moveFilesToDuplicatesFolder(duplicateJpegFiles);
 
-    /** @type {{ delete: boolean }} */
+    /** @type {{ deleteDuplicates: boolean; }} */
     const answers = await inquirer.prompt([
         {
             type: "confirm",
-            name: "delete",
+            name: "deleteDuplicates",
             message: 'Delete all JPEG files from "duplicates" folder?',
         },
     ]);
 
-    if (answers.delete) {
+    if (answers.deleteDuplicates) {
         console.log(`Deleting all JPEG files from "duplicates" folder...`);
 
         // Delete all JPEG files from "duplicates" folder except .gitignore file
         const duplicatesFiles = fs.readdirSync(DUPLICATES_DIR).filter((fileName) => fileName !== ".gitignore");
-        duplicatesFiles.forEach((fileName) => {
+
+        for (const fileName of duplicatesFiles) {
             const filePath = path.resolve(DUPLICATES_DIR, fileName);
             fs.removeSync(filePath);
-        });
+        }
     }
 } else {
     console.log(`No JPEG files found that have RAW images.`);
+}
+
+if (trashedFiles.length) {
+    console.log(`Moving ${trashedFiles.length} JPEG files to "trashed" folder...`);
+
+    for (const trashedFile of trashedFiles) {
+        const src = path.resolve(IMAGES_DIR, trashedFile);
+        const dest = path.resolve(__dirname, "./output/keep-raw/trashed", trashedFile);
+
+        fs.moveSync(src, dest, {
+            overwrite: true,
+        });
+    }
+
+    const { deleteTrashed } = await inquirer.prompt([
+        {
+            type: "confirm",
+            name: "deleteTrashed",
+            message: 'Delete all JPEG files from "trashed" folder?',
+            default: true,
+        },
+    ]);
+
+    if (deleteTrashed) {
+        console.log(`Deleting all JPEG files from "trashed" folder...`);
+
+        // Delete all JPEG files from "trashed" folder except .gitignore file
+        const trashedFiles = fs
+            .readdirSync(path.join(__dirname, "./output/keep-raw/trashed"))
+            .filter((fileName) => fileName !== ".gitignore");
+
+        for (const fileName of trashedFiles) {
+            const filePath = path.resolve(__dirname, "./output/keep-raw/trashed", fileName);
+            fs.removeSync(filePath);
+        }
+    }
 }
 
 console.log(`Done`);
@@ -85,7 +124,7 @@ if (dangerouslyDeleteFromAndroid && dangerouslyDeleteFromAndroidConfirm) {
  * @param {string[]} movedFileNames
  */
 function moveFilesToDuplicatesFolder(movedFileNames) {
-    movedFileNames.forEach((movedFileName) => {
+    for (const movedFileName of movedFileNames) {
         const src = path.resolve(IMAGES_DIR, movedFileName);
         const dest = path.resolve(DUPLICATES_DIR, movedFileName);
 
@@ -94,7 +133,7 @@ function moveFilesToDuplicatesFolder(movedFileNames) {
         fs.moveSync(src, dest, {
             overwrite: true,
         });
-    });
+    }
 }
 
 /**
@@ -113,11 +152,26 @@ function filterDuplicates(jpegFileNames) {
 }
 
 /**
+ * Filters only those files that start with `".trashed"`
+ * @param {string[]} jpegFileNames
+ * @returns {string[]}
+ */
+function filterTrashed(jpegFileNames) {
+    return jpegFileNames.filter((fileName) => fileName.startsWith(".trashed"));
+}
+
+/**
  * Gets all JPEG files from `images` folder
  * @returns {string[]}
  */
 function readJpegFiles() {
-    const files = fs.readdirSync(IMAGES_DIR);
-    const jpegFiles = files.filter((fileName) => fileName.toLowerCase().endsWith(".jpg"));
-    return jpegFiles;
+    return readAllFiles().filter((fileName) => fileName.toLowerCase().endsWith(".jpg"));
+}
+
+/**
+ * Gets all files from `images` folder
+ * @returns {string[]}
+ */
+function readAllFiles() {
+    return fs.readdirSync(IMAGES_DIR).filter((fileName) => fileName !== ".gitignore");
 }
