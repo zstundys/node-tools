@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "start": "npx nodemon",
-        "keep-raw": "node src/keep-raw.js",
+        "keep-raw": "node src/keep-raw.js && node src/catalog-photos.js",
         "copy-to-desktop": "node src/copy-to-desktop.js",
         "rdr2-vr-swap": "node src/rdr2-vr-swapper.js",
         "concurrently": "concurrently"
@@ -15,6 +15,7 @@
     "dependencies": {
         "concurrently": "^8.2.2",
         "delete-empty": "^3.0.0",
+        "exiftool-vendored.exe": "^12.84.0",
         "ffmpeg": "^0.0.4",
         "filesize": "^8.0.7",
         "fluent-ffmpeg": "^2.1.2",
@@ -22,6 +23,7 @@
         "html-pdf": "^3.0.1",
         "inquirer": "^9.2.11",
         "lodash-es": "^4.17.21",
+        "node-exiftool": "^2.3.0",
         "node-xlsx": "^0.23.0",
         "trash": "^8.1.1"
     },
