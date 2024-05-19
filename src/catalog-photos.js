@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 import { groupBy } from "lodash-es";
+import inquirer from "inquirer";
 
 const SOURCE_DIR = path.join(import.meta.dirname, "./output/keep-raw/images");
 const TARGET_DIR = "D:\\Pictures\\Photos";
@@ -20,8 +21,22 @@ export async function catalogPhotos() {
         return;
     }
 
-    console.log(`Cataloging ${totalFiles} files...`);
+    console.log(`About to catalog ${totalFiles} files...`);
     console.log(JSON.stringify(debugMediaByFolder, null, 2));
+
+    const { catalogConfirm } = await inquirer.prompt([
+        {
+            type: "confirm",
+            name: "catalogConfirm",
+            message: `Catalog ${totalFiles} files to "${TARGET_DIR}"?`,
+            default: true,
+        },
+    ]);
+
+    if (!catalogConfirm) {
+        console.log("Catalog canceled.");
+        return;
+    }
 
     //  Transfer files to target folders
     for (const [targetFolderPath, files] of mediaByFolder) {
