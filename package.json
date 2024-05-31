@@ -20,6 +20,7 @@
         "filesize": "^8.0.7",
         "fluent-ffmpeg": "^2.1.2",
         "fs-extra": "^10.1.0",
+        "glob": "^10.3.15",
         "html-pdf": "^3.0.1",
         "inquirer": "^9.2.11",
         "lodash-es": "^4.17.21",

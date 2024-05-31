@@ -14,21 +14,21 @@ export async function catalogPhotos() {
     const debugMediaByFolder = Object.fromEntries(
         mediaByFolder.map(([folderPath, files]) => [folderPath, files.map((f) => path.basename(f.path))])
     );
-    const totalFiles = mediaByFolder.reduce((acc, [, files]) => acc + files.length, 0);
+    const totalFilesCount = mediaByFolder.reduce((acc, [, files]) => acc + files.length, 0);
 
-    if (totalFiles === 0) {
+    if (totalFilesCount === 0) {
         console.log(`No files found in "${SOURCE_DIR}" folder.`);
         return;
     }
 
-    console.log(`About to catalog ${totalFiles} files...`);
+    console.log(`About to catalog ${totalFilesCount} files...`);
     console.log(JSON.stringify(debugMediaByFolder, null, 2));
 
     const { catalogConfirm } = await inquirer.prompt([
         {
             type: "confirm",
             name: "catalogConfirm",
-            message: `Catalog ${totalFiles} files to "${TARGET_DIR}"?`,
+            message: `Catalog ${totalFilesCount} files to "${TARGET_DIR}"?`,
             default: true,
         },
     ]);
@@ -39,6 +39,7 @@ export async function catalogPhotos() {
     }
 
     //  Transfer files to target folders
+    let skipCount = 0;
     for (const [targetFolderPath, files] of mediaByFolder) {
         await fs.ensureDir(targetFolderPath);
 
@@ -46,15 +47,20 @@ export async function catalogPhotos() {
             const from = file.path;
             const to = path.join(targetFolderPath, path.basename(file.path));
 
-            await fs.move(from, to);
+            if (await fs.exists(to)) {
+                skipCount++;
+                console.log(`Skipping ${from} because ${to} already exists`);
+            } else {
+                await fs.move(from, to);
+            }
         }
     }
 
-    console.log(`Files cataloged successfully. Total: ${totalFiles}`);
+    console.log(`Files cataloged successfully. Total: ${totalFilesCount - skipCount}. Skipped: ${skipCount}`);
 }
 
 //  Format date as YYYY-MM using Intl
-const yearMonthFormatter = new Intl.DateTimeFormat("lt-LT", {
+export const yearMonthFormatter = new Intl.DateTimeFormat("lt-LT", {
     year: "numeric",
     month: "2-digit",
 });
