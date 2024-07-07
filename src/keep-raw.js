@@ -10,7 +10,7 @@ import fs from "fs-extra";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { transferAndroidImages, removeAndroidImages } from "./transfer-android-images.js";
+import { AndroidImagesMover } from "./transfer-android-images.js";
 import inquirer from "inquirer";
 import { catalogPhotos } from "./catalog-photos.js";
 
@@ -24,19 +24,26 @@ await run();
 
 async function run() {
     //  MARK: Transfer files
-    const { transferConfirm } = await inquirer.prompt([
+    const { targetDevice } = await inquirer.prompt([
         {
-            type: "confirm",
-            name: "transferConfirm",
-            message: `Transfer Android images from the following directories?\n\n\t${PHONE_PHOTOS_SOURCE_DIRS.join(
-                "\n\t"
-            )}\n`,
-            default: true,
+            type: "list",
+            name: "targetDevice",
+            choices: [
+                ...Object.keys(AndroidImagesMover.IDS_BY_DEVICE),
+                {
+                    value: undefined,
+                    name: "None (Skip transfer)",
+                },
+            ],
+            message: "Select target device:",
+            default: "ASUS_ZENFONE_10",
         },
     ]);
 
-    if (transferConfirm) {
-        await transferAndroidImages(PHONE_PHOTOS_SOURCE_DIRS, IMAGES_DIR);
+    const androidImagesMover = targetDevice ? new AndroidImagesMover(targetDevice) : undefined;
+
+    if (androidImagesMover) {
+        await androidImagesMover.transferImages(PHONE_PHOTOS_SOURCE_DIRS, IMAGES_DIR);
     }
 
     const jpegFiles = readJpegFiles();
@@ -117,28 +124,30 @@ async function run() {
     console.log(`Done`);
 
     //  MARK:  Delete all
-    const { dangerouslyDeleteFromAndroid, dangerouslyDeleteFromAndroidConfirm } = await inquirer.prompt([
-        {
-            type: "confirm",
-            name: "dangerouslyDeleteFromAndroid",
-            message: "Delete all transferred files from Android phone?",
-            default: false,
-        },
-        {
-            type: "confirm",
-            name: "dangerouslyDeleteFromAndroidConfirm",
-            message: "Are you really sure? Changes cannot be undone.",
-            default: false,
-            when: (answers) => answers.dangerouslyDeleteFromAndroid,
-        },
-    ]);
+    if (androidImagesMover) {
+        const { dangerouslyDeleteFromAndroid, dangerouslyDeleteFromAndroidConfirm } = await inquirer.prompt([
+            {
+                type: "confirm",
+                name: "dangerouslyDeleteFromAndroid",
+                message: "Delete all transferred files from Android phone?",
+                default: false,
+            },
+            {
+                type: "confirm",
+                name: "dangerouslyDeleteFromAndroidConfirm",
+                message: "Are you really sure? Changes cannot be undone.",
+                default: false,
+                when: (answers) => answers.dangerouslyDeleteFromAndroid,
+            },
+        ]);
 
-    if (dangerouslyDeleteFromAndroid && dangerouslyDeleteFromAndroidConfirm) {
-        console.log(`Deleting all transferred files from Android phone...`);
+        if (dangerouslyDeleteFromAndroid && dangerouslyDeleteFromAndroidConfirm) {
+            console.log(`Deleting all transferred files from Android phone...`);
 
-        await removeAndroidImages(PHONE_PHOTOS_SOURCE_DIRS);
+            await androidImagesMover.removeImages(PHONE_PHOTOS_SOURCE_DIRS);
 
-        console.log(`Done`);
+            console.log(`Done`);
+        }
     }
 
     //  MARK:  Delete all
