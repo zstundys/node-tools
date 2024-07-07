@@ -14,6 +14,9 @@ importers:
       delete-empty:
         specifier: ^3.0.0
         version: 3.0.0
+      exifr:
+        specifier: ^7.1.3
+        version: 7.1.3
       exiftool-vendored.exe:
         specifier: ^12.84.0
         version: 12.84.0
@@ -309,6 +312,9 @@ packages:
   execa@2.1.0:
     resolution: {integrity: sha512-Y/URAVapfbYy2Xp/gb6A0E7iR8xeqOCXsuuaoMn7A5PzrXUK84E1gyiEfq0wQd/GHA6GsoHWwhNq8anb0mleIw==}
     engines: {node: ^8.12.0 || >=9.7.0}
+
+  exifr@7.1.3:
+    resolution: {integrity: sha512-g/aje2noHivrRSLbAUtBPWFbxKdKhgj/xr1vATDdUXPOFYJlQ62Ft0oy+72V6XLIpDJfHs6gXLbBLAolqOXYRw==}
 
   exiftool-vendored.exe@12.84.0:
     resolution: {integrity: sha512-9ocqJb0Pr9k0TownEMd75payF/XOQLF/swr/l0Ep49D+m609uIZsW09CtowhXmk1KrIFobS3+SkdXK04CSyUwQ==}
@@ -1208,6 +1214,8 @@ snapshots:
       p-finally: 2.0.1
       signal-exit: 3.0.7
       strip-final-newline: 2.0.0
+
+  exifr@7.1.3: {}
 
   exiftool-vendored.exe@12.84.0: {}
 

@@ -2,6 +2,7 @@ import fs from "fs-extra";
 import path from "path";
 import { groupBy } from "lodash-es";
 import inquirer from "inquirer";
+import exifr from "exifr";
 
 const SOURCE_DIR = path.join(import.meta.dirname, "./output/keep-raw/images");
 const TARGET_DIR = "D:\\Pictures\\Photos";
@@ -12,7 +13,18 @@ const TARGET_DIR = "D:\\Pictures\\Photos";
 export async function catalogPhotos() {
     const mediaByFolder = Object.entries(await groupFilesByDateMonth(SOURCE_DIR));
     const debugMediaByFolder = Object.fromEntries(
-        mediaByFolder.map(([folderPath, files]) => [folderPath, files.map((f) => path.basename(f.path))])
+        mediaByFolder.map(([folderPath, files]) => {
+            /** @example ['#.jpg', '#.mp4', '#.dng'] */
+            const fileNames = files.map((f) => path.basename(f.path));
+            /** @example { jpg: ['#.jpg'], mp4: ['#.mp4'], dng: ['#.dng'] }  */
+            const filesByExtension = groupBy(fileNames, (fileName) => path.extname(fileName).toLowerCase().slice(1));
+            /** @example { jpg: '5 files', mp4: '2 files', dng: '3 files'}  */
+            const fileGroups = Object.fromEntries(
+                Object.entries(filesByExtension).map(([ext, files]) => [ext, `${files.length} files`])
+            );
+
+            return [folderPath, fileGroups];
+        })
     );
     const totalFilesCount = mediaByFolder.reduce((acc, [, files]) => acc + files.length, 0);
 
@@ -76,14 +88,18 @@ async function groupFilesByDateMonth(folderPath) {
         return Promise.all(
             mediaFileNames.map(async (fileName) => {
                 const filePath = path.join(folderPath, fileName);
-                return { path: filePath, stats: await fs.stat(filePath) };
+                return {
+                    path: filePath,
+                    createdAt: await exifr
+                        .parse(filePath)
+                        .then((exifStats) => exifStats.ModifyDate)
+                        .catch(() => fs.stat(filePath).then((fsStats) => fsStats.ctime)),
+                };
             })
         );
     });
 
-    const grouped = groupBy(filesWithStats, (file) =>
-        path.join(TARGET_DIR, yearMonthFormatter.format(file.stats.mtime))
-    );
+    const grouped = groupBy(filesWithStats, (file) => path.join(TARGET_DIR, yearMonthFormatter.format(file.createdAt)));
 
     return grouped;
 }

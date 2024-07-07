@@ -24,7 +24,20 @@ await run();
 
 async function run() {
     //  MARK: Transfer files
-    await transferAndroidImages(PHONE_PHOTOS_SOURCE_DIRS, IMAGES_DIR);
+    const { transferConfirm } = await inquirer.prompt([
+        {
+            type: "confirm",
+            name: "transferConfirm",
+            message: `Transfer Android images from the following directories?\n\n\t${PHONE_PHOTOS_SOURCE_DIRS.join(
+                "\n\t"
+            )}\n`,
+            default: true,
+        },
+    ]);
+
+    if (transferConfirm) {
+        await transferAndroidImages(PHONE_PHOTOS_SOURCE_DIRS, IMAGES_DIR);
+    }
 
     const jpegFiles = readJpegFiles();
     const allFiles = readAllFiles();

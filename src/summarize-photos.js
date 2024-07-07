@@ -4,7 +4,7 @@ import { globSync } from "glob";
 import { yearMonthFormatter } from "./catalog-photos.js";
 
 /**
- * 2024-01-01 to 2014-01, etc...
+ * 2024-01-01 to 2024-01, etc...
  */
 const sourceFiles = globSync("D:/Pictures/Photos/2024-**-**/*.{jpg,png,jpeg,dng,cr2,tif,mp4}");
 
