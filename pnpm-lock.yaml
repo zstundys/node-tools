@@ -17,6 +17,9 @@ importers:
       exifr:
         specifier: ^7.1.3
         version: 7.1.3
+      exiftool-vendored:
+        specifier: ^28.0.0
+        version: 28.0.0
       exiftool-vendored.exe:
         specifier: ^12.84.0
         version: 12.84.0
@@ -72,6 +75,9 @@ packages:
     resolution: {integrity: sha512-yN599ZBuMPPK4tdoToLlvgJB4CLK8fGl7ntfy0Wn7U6ttNvHYurd81bfUiK/6sMkiIwm65R6ck4L6+Y3DfVbNQ==}
     engines: {node: '>= 0.4'}
 
+  '@photostructure/tz-lookup@10.0.0':
+    resolution: {integrity: sha512-8ZAjoj/irCuvUlyEinQ/HB6A8hP3bD1dgTOZvfl1b9nAwqniutFDHOQRcGM6Crea68bOwPj010f0Z4KkmuLHEA==}
+
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -91,6 +97,9 @@ packages:
   '@stroncium/procfs@1.2.1':
     resolution: {integrity: sha512-X1Iui3FUNZP18EUvysTHxt+Avu2nlVzyf90YM8OYgP6SGzTzzX/0JgObfO1AQQDzuZtNNz29bVh8h5R97JrjxA==}
     engines: {node: '>=8'}
+
+  '@types/luxon@3.4.2':
+    resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
 
   aggregate-error@4.0.1:
     resolution: {integrity: sha512-0poP0T7el6Vq3rstR8Mn4V/IQrpBLO6POkUSrN7RhyY+GF/InCFShQzsQ39T25gkHhLgSLByyAz+Kjb+c2L98w==}
@@ -155,6 +164,10 @@ packages:
 
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
+
+  batch-cluster@13.0.0:
+    resolution: {integrity: sha512-EreW0Vi8TwovhYUHBXXRA5tthuU2ynGsZFlboyMJHCCUXYa2AjgwnE3ubBOJs2xJLcuXFJbi6c/8pH5+FVj8Og==}
+    engines: {node: '>=14'}
 
   bcrypt-pbkdf@1.0.2:
     resolution: {integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==}
@@ -320,6 +333,17 @@ packages:
     resolution: {integrity: sha512-9ocqJb0Pr9k0TownEMd75payF/XOQLF/swr/l0Ep49D+m609uIZsW09CtowhXmk1KrIFobS3+SkdXK04CSyUwQ==}
     os: [win32]
 
+  exiftool-vendored.exe@12.89.0:
+    resolution: {integrity: sha512-GyayTRwH6v/3SCV7g80zV5oMw66AQFnPJVfPc/At9PMAe90/9N7GCM1o6U1FGOpa1ZvmSm38RvvBEMr667vnnw==}
+    os: [win32]
+
+  exiftool-vendored.pl@12.89.0:
+    resolution: {integrity: sha512-pkkWBRmeylUEAfBOg/e6NO8dZ572yDA6kTsnw1gGiAhJUxgoLGP+ageuOD6Oxywag5/HFcT2syJ+L1/ch5hjfg==}
+    os: ['!win32']
+
+  exiftool-vendored@28.0.0:
+    resolution: {integrity: sha512-/T2DCb+n/YsVOVhi/XFGCoWIzYyG/RuLPXRQQti0ocv2pNC+Ofk/hDOQZ0zzaWwT39r2Owqwvy/jmGKNFNP0/g==}
+
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
@@ -422,6 +446,10 @@ packages:
   hasha@2.2.0:
     resolution: {integrity: sha512-jZ38TU/EBiGKrmyTNNZgnvCZHNowiRI4+w/I9noMlekHTZH3KyGgvJLmhSgykeAQ9j2SYPDosM0Bg3wHfzibAQ==}
     engines: {node: '>=0.10.0'}
+
+  he@1.2.0:
+    resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
+    hasBin: true
 
   html-pdf@3.0.1:
     resolution: {integrity: sha512-CKNSacmQn+CKJ2GNfT4UYKaPy/T3Ndj82yJ2aju/UPmnvWNjIpyumqRqkFU0mwT6BTHBFhFGTnXN8dBn4Bdj0Q==}
@@ -542,6 +570,10 @@ packages:
   lru-cache@10.2.2:
     resolution: {integrity: sha512-9hp3Vp2/hFQUiIwKo8XCeFVnrg8Pk3TYNPIR7tJADKi5YfcF7vEaK7avFHTlSy3kOKYaJQaalfEo6YuXdceBOQ==}
     engines: {node: 14 || >=16.14}
+
+  luxon@3.4.4:
+    resolution: {integrity: sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA==}
+    engines: {node: '>=12'}
 
   makepromise@1.0.0:
     resolution: {integrity: sha512-M1q31Q56rlA+gwvmfWj7QFDMIJOuj527fQx/rN3dlzUtsopC9ZjtyekIBW4Fw0HZP6O6Azuw3/Vtk5O59bXz7A==}
@@ -967,6 +999,8 @@ snapshots:
 
   '@ljharb/through@2.3.9': {}
 
+  '@photostructure/tz-lookup@10.0.0': {}
+
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
@@ -979,6 +1013,8 @@ snapshots:
       execa: 2.1.0
 
   '@stroncium/procfs@1.2.1': {}
+
+  '@types/luxon@3.4.2': {}
 
   aggregate-error@4.0.1:
     dependencies:
@@ -1037,6 +1073,8 @@ snapshots:
   balanced-match@1.0.2: {}
 
   base64-js@1.5.1: {}
+
+  batch-cluster@13.0.0: {}
 
   bcrypt-pbkdf@1.0.2:
     dependencies:
@@ -1219,6 +1257,23 @@ snapshots:
 
   exiftool-vendored.exe@12.84.0: {}
 
+  exiftool-vendored.exe@12.89.0:
+    optional: true
+
+  exiftool-vendored.pl@12.89.0:
+    optional: true
+
+  exiftool-vendored@28.0.0:
+    dependencies:
+      '@photostructure/tz-lookup': 10.0.0
+      '@types/luxon': 3.4.2
+      batch-cluster: 13.0.0
+      he: 1.2.0
+      luxon: 3.4.4
+    optionalDependencies:
+      exiftool-vendored.exe: 12.89.0
+      exiftool-vendored.pl: 12.89.0
+
   extend@3.0.2:
     optional: true
 
@@ -1354,6 +1409,8 @@ snapshots:
       pinkie-promise: 2.0.1
     optional: true
 
+  he@1.2.0: {}
+
   html-pdf@3.0.1:
     optionalDependencies:
       phantomjs-prebuilt: 2.1.16
@@ -1482,6 +1539,8 @@ snapshots:
       is-unicode-supported: 0.1.0
 
   lru-cache@10.2.2: {}
+
+  luxon@3.4.4: {}
 
   makepromise@1.0.0: {}
 

@@ -3,6 +3,7 @@ import path from "path";
 import { groupBy } from "lodash-es";
 import inquirer from "inquirer";
 import exifr from "exifr";
+import { exiftool } from "exiftool-vendored";
 
 const SOURCE_DIR = path.join(import.meta.dirname, "./output/keep-raw/images");
 const TARGET_DIR = "D:\\Pictures\\Photos";
@@ -71,7 +72,7 @@ export async function catalogPhotos() {
     console.log(`Files cataloged successfully. Total: ${totalFilesCount - skipCount}. Skipped: ${skipCount}`);
 }
 
-//  Format date as YYYY-MM using Intl
+/**  Format date as YYYY-MM ("2024-01") using Intl */
 export const yearMonthFormatter = new Intl.DateTimeFormat("lt-LT", {
     year: "numeric",
     month: "2-digit",
@@ -90,10 +91,7 @@ async function groupFilesByDateMonth(folderPath) {
                 const filePath = path.join(folderPath, fileName);
                 return {
                     path: filePath,
-                    createdAt: await exifr
-                        .parse(filePath)
-                        .then((exifStats) => exifStats.ModifyDate)
-                        .catch(() => fs.stat(filePath).then((fsStats) => fsStats.ctime)),
+                    createdAt: await getDateTaken(filePath),
                 };
             })
         );
@@ -102,4 +100,22 @@ async function groupFilesByDateMonth(folderPath) {
     const grouped = groupBy(filesWithStats, (file) => path.join(TARGET_DIR, yearMonthFormatter.format(file.createdAt)));
 
     return grouped;
+}
+
+/**
+ * @param {string} filePath
+ */
+export async function getDateTaken(filePath) {
+    const exifStats = await exiftool.read(filePath);
+    const exifDate = exifStats.DateTimeOriginal || exifStats.CreateDate || exifStats.ModifyDate;
+
+    if (exifDate === undefined) {
+        return fs.stat(filePath).then((fsStats) => fsStats.ctime);
+    }
+
+    if (typeof exifDate === "string") {
+        return new Date(exifDate);
+    }
+
+    return exifDate.toDate();
 }
