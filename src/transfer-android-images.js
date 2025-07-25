@@ -5,6 +5,7 @@ import path from "node:path";
 // You may need to set the IP and Port for your device
 const DEVICE_IP_PORT = "192.168.0.125:39945";
 
+
 export class AndroidImagesMover {
     static IDS_BY_DEVICE = {
         ASUS_ZENFONE_10: "R7AIB7005204XXX",
@@ -194,3 +195,42 @@ export class AndroidImagesMover {
         });
     }
 }
+
+
+
+/**
+ * @param {'SIGINT' | 'SIGTERM'} signal
+ */
+function handleExit(signal) {
+    console.log(`\n🛑 Received ${signal}. Disconnecting all ADB connections...`);
+    try {
+        execSync('adb disconnect', { stdio: 'inherit' });
+        console.log('✅ ADB disconnect completed.');
+    } catch (error) {
+        if (error instanceof Error) {
+            // Log the error message if it's an instance of Error
+            console.error('❌ Error during ADB disconnect:', error.message);
+        }
+    }
+    process.exit(0);
+}
+
+// Handle Ctrl+C (SIGINT)
+process.on('SIGINT', () => handleExit('SIGINT'));
+
+// Handle terminate signal (SIGTERM)
+process.on('SIGTERM', () => handleExit('SIGTERM'));
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+    console.error('❌ Uncaught exception:', error);
+    try {
+        execSync('adb disconnect', { stdio: 'inherit' });
+        console.log('✅ Emergency ADB disconnect completed.');
+    } catch (disconnectError) {
+        if (disconnectError instanceof Error) {
+            console.error('❌ Error during emergency ADB disconnect:', disconnectError.message);
+        }
+    }
+    process.exit(1);
+});
