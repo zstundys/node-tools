@@ -1,18 +1,31 @@
+import { ExifTool } from "exiftool-vendored";
 import fs from "fs-extra";
-import path from "path";
-import { groupBy } from "lodash-es";
 import inquirer from "inquirer";
-import exifr from "exifr";
-import { exiftool } from "exiftool-vendored";
+import { groupBy } from "lodash-es";
+import path from "node:path";
+import { glob } from 'node:fs/promises'
+import { yearMonthFormatter } from "./utils/format.js";
+import os from "node:os";
+import { isMainModule } from "./utils/directory.js";
 
-const SOURCE_DIR = path.join(import.meta.dirname, "./output/keep-raw/images");
-const TARGET_DIR = "D:\\Pictures\\Photos";
+const SOURCE_DIR = 'E:\\Pictures\\Photos\\Imported';
+const TARGET_DIR = "E:\\Pictures\\Photos";
+
+if (isMainModule()) {
+    console.log(`Cataloging photos from "${SOURCE_DIR}" to "${TARGET_DIR}"...`);
+    await catalogPhotos(SOURCE_DIR, TARGET_DIR);
+}
 
 /**
  *  Groups files by date and moves them to the Photos catalog
  */
-export async function catalogPhotos() {
-    const mediaByFolder = Object.entries(await groupFilesByDateMonth(SOURCE_DIR));
+/**
+ * Groups files by date and moves them to the Photos catalog
+ * @param {string} sourceDir
+ * @param {string} targetDir
+ */
+export async function catalogPhotos(sourceDir, targetDir) {
+    const mediaByFolder = Object.entries(await groupFilesByDateMonth(sourceDir, targetDir));
     const debugMediaByFolder = Object.fromEntries(
         mediaByFolder.map(([folderPath, files]) => {
             /** @example ['#.jpg', '#.mp4', '#.dng'] */
@@ -30,7 +43,7 @@ export async function catalogPhotos() {
     const totalFilesCount = mediaByFolder.reduce((acc, [, files]) => acc + files.length, 0);
 
     if (totalFilesCount === 0) {
-        console.log(`No files found in "${SOURCE_DIR}" folder.`);
+        console.log(`No files found in "${sourceDir}" folder.`);
         return;
     }
 
@@ -41,7 +54,7 @@ export async function catalogPhotos() {
         {
             type: "confirm",
             name: "catalogConfirm",
-            message: `Catalog ${totalFilesCount} files to "${TARGET_DIR}"?`,
+            message: `Catalog ${totalFilesCount} files to "${targetDir}"?`,
             default: true,
         },
     ]);
@@ -53,7 +66,8 @@ export async function catalogPhotos() {
 
     //  Transfer files to target folders
     let skipCount = 0;
-    for (const [targetFolderPath, files] of mediaByFolder) {
+    for (const [folderPath, files] of mediaByFolder) {
+        const targetFolderPath = folderPath;
         await fs.ensureDir(targetFolderPath);
 
         for (const file of files) {
@@ -72,40 +86,66 @@ export async function catalogPhotos() {
     console.log(`Files cataloged successfully. Total: ${totalFilesCount - skipCount}. Skipped: ${skipCount}`);
 }
 
-/**  Format date as YYYY-MM ("2024-01") using Intl */
-export const yearMonthFormatter = new Intl.DateTimeFormat("lt-LT", {
-    year: "numeric",
-    month: "2-digit",
-});
-
 /**
  * Takes in a folder containing a set of images/videos, and generates a tree structure of files
  * @param {string} folderPath
+ * @param {string} targetDir
  */
-async function groupFilesByDateMonth(folderPath) {
-    const filesWithStats = await fs.readdir(folderPath).then((fileNames) => {
-        const mediaFileNames = fileNames.filter((fileName) => /\.(dng|jpg|mp4)$/i.test(fileName));
+async function groupFilesByDateMonth(folderPath, targetDir) {
+    // Use glob to find all media files recursively, case-insensitively.
+    const mediaFilePaths = glob(`${folderPath}/**/*.{dng,jpg,mp4,jpeg,mov,avi,mpg,heic}`, {});
+    const filePaths = [];
+    for await (const filePath of mediaFilePaths) {
+        filePaths.push(filePath);
+    }
+
+    // Limit concurrency for exiftool to avoid overwhelming the system
+    const CONCURRENCY = 500;
+    const filesWithStats = [];
+    let idx = 0;
+
+    /**
+     * @param {string[]} batch
+     */
+    async function processBatch(batch) {
+        const exiftool = new ExifTool({
+            maxProcs: os.cpus().length,
+            minDelayBetweenSpawnMillis: 0,
+            streamFlushMillis: 10
+        });
 
         return Promise.all(
-            mediaFileNames.map(async (fileName) => {
-                const filePath = path.join(folderPath, fileName);
+            batch.map(async (filePath) => {
+                // Remove or comment out the log for speed
+                console.log(`Processing file: ${filePath}`);
                 return {
                     path: filePath,
-                    createdAt: await getDateTaken(filePath),
+                    createdAt: await getDateTaken(exiftool, filePath),
                 };
             })
-        );
-    });
+        ).finally(() => {
+            exiftool.end();
+        });
+    }
 
-    const grouped = groupBy(filesWithStats, (file) => path.join(TARGET_DIR, yearMonthFormatter.format(file.createdAt)));
+    while (idx < filePaths.length) {
+        const batch = filePaths.slice(idx, idx + CONCURRENCY);
+        const batchResults = await processBatch(batch);
+        filesWithStats.push(...batchResults);
+        idx += CONCURRENCY;
+
+    }
+
+    const grouped = groupBy(filesWithStats, (file) => path.join(targetDir, yearMonthFormatter.format(file.createdAt)));
 
     return grouped;
 }
 
 /**
+ * @param {ExifTool} exiftool
  * @param {string} filePath
  */
-export async function getDateTaken(filePath) {
+export async function getDateTaken(exiftool, filePath) {
     const exifStats = await exiftool.read(filePath);
     const exifDate = exifStats.DateTimeOriginal || exifStats.CreateDate || exifStats.ModifyDate;
 
@@ -113,9 +153,26 @@ export async function getDateTaken(filePath) {
         return fs.stat(filePath).then((fsStats) => fsStats.ctime);
     }
 
+    let dateTaken;
     if (typeof exifDate === "string") {
-        return new Date(exifDate);
+        dateTaken = new Date(exifDate);
+    } else if (exifDate && typeof exifDate.toDate === "function") {
+        dateTaken = exifDate.toDate();
+    } else {
+        dateTaken = exifDate;
     }
 
-    return exifDate.toDate();
+    // Debugger for invalid date
+    if (!(dateTaken instanceof Date) || isNaN(dateTaken.getTime())) {
+        dateTaken = await fs.stat(filePath).then((fsStats) => fsStats.ctime);
+    }
+
+    if (!(dateTaken instanceof Date) || isNaN(dateTaken.getTime())) {
+        debugger;
+        throw new Error(`Invalid date taken for file: ${filePath}`);
+    }
+
+
+
+    return dateTaken;
 }

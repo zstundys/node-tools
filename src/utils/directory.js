@@ -1,6 +1,10 @@
 import fs from "fs-extra";
 import path from "path";
 
+export function isMainModule() {
+    return import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`
+}
+
 export class DirectoryUtils {
     /**
      * Returns absolute paths to files matching a specific extension

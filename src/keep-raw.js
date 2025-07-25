@@ -7,17 +7,18 @@
  */
 
 import fs from "fs-extra";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-import { AndroidImagesMover } from "./transfer-android-images.js";
 import inquirer from "inquirer";
 import { catalogPhotos } from "./catalog-photos.js";
+import { AndroidImagesMover } from "./transfer-android-images.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PHONE_PHOTOS_SOURCE_DIRS = ["/sdcard/DCIM/Camera", "/sdcard/DCIM/OpenCamera", "/sdcard/Pictures/Raw"];
-const IMAGES_DIR = path.join(__dirname, "./output/keep-raw/images");
+const IMAGES_DIR = "E:\\Pictures\\Photos\\Imported";
+const TARGET_DIR = "E:\\Pictures\\Photos";
 const DUPLICATES_DIR = path.join(__dirname, "./output/keep-raw/duplicates");
 
 await run();
@@ -161,7 +162,7 @@ async function run() {
     ]);
 
     if (catalogConfirm) {
-        await catalogPhotos();
+        await catalogPhotos(IMAGES_DIR, TARGET_DIR);
     }
 }
 
