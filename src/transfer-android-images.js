@@ -7,8 +7,6 @@ const DEVICE_IP_PORT = "192.168.0.125:39945";
 
 export class AndroidImagesMover {
     static IDS_BY_DEVICE = {
-        PIXEL_7_PRO: "28231FDH3009U9",
-        PIXEL_4: "9B011FFAZ007CV",
         ASUS_ZENFONE_10: "R7AIB7005204XXX",
     };
 
