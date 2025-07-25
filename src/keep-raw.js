@@ -156,7 +156,7 @@ async function run() {
         {
             type: "confirm",
             name: "catalogConfirm",
-            message: 'Catalog transfered photos? (Group by date like "2024-01" and move to Photos folder)',
+            message: `Catalog transferred photos in ${IMAGES_DIR}? (Group by date like "2024-01" and move to Photos folder)`,
             default: true,
         },
     ]);
