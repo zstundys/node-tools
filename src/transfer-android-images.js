@@ -1,18 +1,17 @@
-import fs from "fs-extra";
-import { exec, execSync } from "node:child_process";
-import path from "node:path";
-
-// You may need to set the IP and Port for your device
-const DEVICE_IP_PORT = "192.168.0.125:39945";
-
+import fs from 'fs-extra';
+import { exec, execSync } from 'node:child_process';
+import path from 'node:path';
 
 export class AndroidImagesMover {
-    static IDS_BY_DEVICE = {
-        ASUS_ZENFONE_10: "R7AIB7005204XXX",
-    };
+    static DEVICE_TARGETS = Object.freeze({
+        ASUS_ZENFONE_10: Object.freeze({
+            id: 'R7AIB7005204XXX',
+            ip: '192.168.0.125:39945',
+        }),
+    });
 
     /**
-     * @param {keyof typeof AndroidImagesMover['IDS_BY_DEVICE']} targetDevice
+     * @param {DeviceKey} targetDevice
      */
     constructor(targetDevice) {
         this.device = targetDevice;
@@ -21,7 +20,11 @@ export class AndroidImagesMover {
     }
 
     get deviceId() {
-        return AndroidImagesMover.IDS_BY_DEVICE[this.device];
+        return AndroidImagesMover.DEVICE_TARGETS[this.device].id;
+    }
+
+    get deviceIp() {
+        return AndroidImagesMover.DEVICE_TARGETS[this.device].ip;
     }
 
     /**
@@ -32,9 +35,9 @@ export class AndroidImagesMover {
         if (this.connectionType === 'usb') {
             return `-s ${this.deviceId}`;
         } else if (this.connectionType === 'wifi') {
-            return `-s ${DEVICE_IP_PORT}`;
+            return `-s ${this.deviceIp}`;
         }
-        return ''; // fallback for when connection type is not determined
+        return '';
     }
 
     /**
@@ -76,7 +79,7 @@ export class AndroidImagesMover {
         if (this.connectionType === 'wifi') {
             console.log(`📱 [${this.device}] Disconnecting from WiFi connection...`);
             return new Promise((resolve) => {
-                exec(`adb disconnect ${DEVICE_IP_PORT}`, (err, stdout, stderr) => {
+                exec(`adb disconnect ${this.deviceIp}`, (err, stdout, stderr) => {
                     if (err) {
                         console.warn(`📱 [${this.device}] Warning: Error disconnecting: ${err}`);
                     } else {
@@ -93,7 +96,7 @@ export class AndroidImagesMover {
     /** @return {Promise<void>} */
     #ensureAdbConnection() {
         return new Promise((resolve, reject) => {
-            exec("adb devices -l", (err, stdout, stderr) => {
+            exec('adb devices -l', (err, stdout, stderr) => {
                 if (err) {
                     console.error(`Error listing devices: ${err}`);
                     reject(err);
@@ -104,8 +107,11 @@ export class AndroidImagesMover {
 
                 // If device is not listed, try to connect via IP:Port
                 if (!stdout.includes(this.deviceId)) {
-                    console.log(`📱 [${this.device}] Device ${this.deviceId} not found. Attempting to connect via WiFi...`, DEVICE_IP_PORT);
-                    exec(`adb connect ${DEVICE_IP_PORT}`, (connectErr, connectStdout) => {
+                    console.log(
+                        `📱 [${this.device}] Device ${this.deviceId} not found. Attempting to connect via WiFi...`,
+                        this.deviceIp
+                    );
+                    exec(`adb connect ${this.deviceIp}`, (connectErr, connectStdout) => {
                         if (connectErr) {
                             console.error(`Error connecting to device: ${connectErr}`);
                             reject(connectErr);
@@ -195,8 +201,6 @@ export class AndroidImagesMover {
         });
     }
 }
-
-
 
 /**
  * @param {'SIGINT' | 'SIGTERM'} signal

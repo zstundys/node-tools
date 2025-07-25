@@ -25,12 +25,13 @@ await run();
 
 async function run() {
     //  MARK: Transfer files
+    /** @type {{targetDevice: DeviceKey | undefined}} */
     const { targetDevice } = await inquirer.prompt([
         {
             type: "list",
             name: "targetDevice",
             choices: [
-                ...Object.keys(AndroidImagesMover.IDS_BY_DEVICE),
+                ...Object.keys(AndroidImagesMover.DEVICE_TARGETS),
                 {
                     value: undefined,
                     name: "None (Skip transfer)",
@@ -138,7 +139,8 @@ async function run() {
                 name: "dangerouslyDeleteFromAndroidConfirm",
                 message: "Are you really sure? Changes cannot be undone.",
                 default: false,
-                when: (answers) => answers.dangerouslyDeleteFromAndroid,
+                when: (/** @type {{ dangerouslyDeleteFromAndroid: boolean; }} */ answers) =>
+                    answers.dangerouslyDeleteFromAndroid,
             },
         ]);
 
